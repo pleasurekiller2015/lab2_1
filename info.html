@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Про нас - Магазин Гаджетів</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html"><img src="images/logo.png" alt="Логотип" class="logo"></a>
+            <ul class="nav-links">
+                <li><a href="index.html">Головна</a></li>
+                <li><a href="catalog.html">Каталог</a></li>
+                <li><a href="info.html">Про нас</a></li>
+                <li><a href="contacts.html">Контакти</a></li>
+            </ul>
+            <div class="cart-toggle">
+                <i class="fas fa-shopping-cart cart-toggle-icon"></i>
+            </div>
+        </div>
+    </nav>
+
+    <section class="about-section">
+        <div class="container">
+            <h2>Про нас</h2>
+            <div class="about-content">
+                <img src="images/about-image.jpg" alt="Команда магазину" class="about-image">
+                <div class="about-text">
+                    <h3>Наша місія</h3>
+                    <p>Ми прагнемо забезпечити клієнтів найсучаснішими гаджетами за найкращими цінами. Наш магазин — це місце, де технології зустрічаються з інноваціями, створюючи нові можливості для кожного клієнта.</p>
+                    <h3>Чому обирають нас?</h3>
+                    <ul>
+                        <li>Великий асортимент оригінальних товарів</li>
+                        <li>Гарантія якості на всі продукти</li>
+                        <li>Швидка доставка по всій Україні</li>
+                        <li>Професійна підтримка клієнтів</li>
+                    </ul>
+                    <a href="contacts.html" class="cta-btn">Зв'язатися з нами</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="global-cart" style="display: none;">
+        <button class="close-cart-btn">&times;</button>
+        <h2>Кошик</h2>
+        <div class="cart-items"></div>
+        <div class="cart-total">
+            <span>Всього:</span>
+            <span class="total-price">₴0</span>
+        </div>
+        <button class="checkout">Оформити замовлення</button>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Магазин Гаджетів. Всі права захищено.</p>
+            <div class="social-media">
+                <a href="#"><img src="icons/facebook.svg" alt="Facebook"></a>
+                <a href="#"><img src="icons/instagram.svg" alt="Instagram"></a>
+                <a href="#"><img src="icons/twitter.svg" alt="Twitter"></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const cartItemsContainer = document.querySelector('.cart-items');
+        const totalPriceContainer = document.querySelector('.total-price');
+        let totalPrice = 0;
+
+        function loadCart() {
+            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+            cartItems.forEach(item => {
+                addCartItem(item.name, item.price);
+            });
+        }
+
+        function addCartItem(productName, productPrice) {
+            const cartItem = document.createElement('div');
+            cartItem.innerText = `${productName} - ₴${productPrice.toFixed(2)}`;
+            cartItemsContainer.appendChild(cartItem);
+            totalPrice += productPrice;
+            totalPriceContainer.innerText = `₴${totalPrice.toFixed(2)}`;
+        }
+
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', () => {
+                const productCard = button.closest('.product-card');
+                const productName = productCard.querySelector('h3').innerText;
+                const productPrice = parseFloat(productCard.querySelector('.price').innerText.replace('₴', '').replace(',', ''));
+                addCartItem(productName, productPrice);
+                const cart = JSON.parse(localStorage.getItem('cart')) || [];
+                cart.push({ name: productName, price: productPrice });
+                localStorage.setItem('cart', JSON.stringify(cart));
+            });
+        });
+
+        loadCart();
+
+        const closeCartBtn = document.querySelector('.close-cart-btn');
+        const globalCart = document.querySelector('.global-cart');
+        closeCartBtn.addEventListener('click', () => {
+            globalCart.style.display = 'none';
+        });
+
+        const cartToggle = document.querySelector('.cart-toggle');
+        cartToggle.addEventListener('click', () => {
+            globalCart.style.display = 'block';
+        });
+    </script>
+</body>
+</html>

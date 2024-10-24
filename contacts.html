@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Контакти - Магазин Гаджетів</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html"><img src="images/logo.png" alt="Логотип" class="logo"></a>
+            <ul class="nav-links">
+                <li><a href="index.html">Головна</a></li>
+                <li><a href="catalog.html">Каталог</a></li>
+                <li><a href="info.html">Про нас</a></li>
+                <li><a href="contacts.html">Контакти</a></li>
+            </ul>
+            <div class="cart-toggle">
+                <i class="fas fa-shopping-cart cart-toggle-icon"></i>
+            </div>
+        </div>
+    </nav>
+
+    <div class="global-cart">
+        <button class="close-cart-btn">&times;</button>
+        <h2>Кошик</h2>
+        <div class="cart-items"></div>
+        <div class="cart-total">
+            <span>Всього:</span>
+            <span class="total-price">₴0</span>
+        </div>
+        <button class="checkout">Оформити замовлення</button>
+    </div>
+
+    <section class="contact-section">
+        <div class="container">
+            <h2>Контакти</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>Зв'яжіться з нами</h3>
+                    <p>Ми завжди раді допомогти вам! Заповніть форму або зв'яжіться з нами за наведеними контактами.</p>
+                    <ul>
+                        <li><strong>Телефон:</strong> +380 123 456 789</li>
+                        <li><strong>Email:</strong> info@нашсайт.com</li>
+                        <li><strong>Адреса:</strong> м. Київ, вул. Прикладна, 12</li>
+                    </ul>
+                    <div class="social-media">
+                        <a href="#"><img src="icons/facebook.svg" alt="Facebook"></a>
+                        <a href="#"><img src="icons/instagram.svg" alt="Instagram"></a>
+                        <a href="#"><img src="icons/twitter.svg" alt="Twitter"></a>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <form action="submit_contact_form.php" method="POST">
+                        <div class="form-group">
+                            <label for="name">Ваше ім'я</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Ваш email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Повідомлення</label>
+                            <textarea id="message" name="message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="cta-btn">Надіслати повідомлення</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Магазин Гаджетів. Всі права захищено.</p>
+            <div class="social-media">
+                <a href="#"><img src="icons/facebook.svg" alt="Facebook"></a>
+                <a href="#"><img src="icons/instagram.svg" alt="Instagram"></a>
+                <a href="#"><img src="icons/twitter.svg" alt="Twitter"></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const cartItemsContainer = document.querySelector('.cart-items');
+        const totalPriceContainer = document.querySelector('.total-price');
+        let totalPrice = 0;
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        function loadCart() {
+            cartItemsContainer.innerHTML = '';
+            totalPrice = 0;
+            cart.forEach((item, index) => {
+                addCartItem(item.name, item.price, index);
+            });
+            updateTotalPrice();
+        }
+
+        function addCartItem(productName, productPrice, index) {
+            const cartItem = document.createElement('div');
+            cartItem.classList.add('cart-item');
+            cartItem.innerHTML = `
+                <span>${productName} - ₴${productPrice.toFixed(2)}</span>
+                <button class="remove-item" data-index="${index}">&times;</button>
+            `;
+            cartItemsContainer.appendChild(cartItem);
+            totalPrice += productPrice;
+            updateTotalPrice();
+        }
+
+        function updateTotalPrice() {
+            totalPriceContainer.innerText = `₴${totalPrice.toFixed(2)}`;
+        }
+
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', () => {
+                const productCard = button.closest('.product-card');
+                const productName = productCard.querySelector('h3').innerText;
+                const productPrice = parseFloat(productCard.querySelector('.price').innerText.replace('₴', '').replace(',', ''));
+                cart.push({ name: productName, price: productPrice });
+                localStorage.setItem('cart', JSON.stringify(cart));
+                loadCart();
+            });
+        });
+
+        cartItemsContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-item')) {
+                const index = e.target.dataset.index;
+                cart.splice(index, 1);
+                localStorage.setItem('cart', JSON.stringify(cart));
+                loadCart();
+            }
+        });
+
+        const cartToggleBtn = document.querySelector('.cart-toggle-icon');
+        const globalCart = document.querySelector('.global-cart');
+
+        cartToggleBtn.addEventListener('click', () => {
+            globalCart.classList.toggle('active');
+        });
+
+        const closeCartBtn = document.querySelector('.close-cart-btn');
+        closeCartBtn.addEventListener('click', () => {
+            globalCart.classList.remove('active');
+        });
+
+        loadCart();
+    </script>
+</body>
+</html>
